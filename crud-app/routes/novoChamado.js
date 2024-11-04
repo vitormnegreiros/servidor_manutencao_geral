@@ -6,19 +6,21 @@ const db = require('../db/dbConnection');
 router.get('/', (req, res) => {
     const query = `
     SELECT 
-    rp.id AS chamado_id,
-    rp.data_abertura AS data,
-    rp.local,
-    rp.tipo_manutencao,
-    rp.mensagem_problema,
-    rp.mensagem_solucao,
-    ct.nome AS tecnico_responsavel
-    FROM 
-    relatarProblema rp
-    LEFT JOIN 
-    cadastroTecnico ct ON rp.cpf_tecnico = ct.cpf  
-    WHERE 
-    rp.status = 'Pendente';
+rp.id AS chamado_id,
+rp.data_abertura AS data,
+rp.local,
+rp.tipo_manutencao,
+rp.mensagem_problema,
+rp.mensagem_solucao,
+ct.nome AS tecnico_responsavel
+FROM 
+relatarProblema rp
+LEFT JOIN 
+cadastroTecnico ct ON rp.cpf_tecnico = ct.cpf  
+WHERE 
+rp.status = 'Pendente'
+ORDER BY
+rp.data_abertura  DESC;
     `;
 
     db.query(query, (err, results) => {
