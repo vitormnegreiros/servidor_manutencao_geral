@@ -4,18 +4,19 @@ const db = require('../db/dbConnection');
 
 // Atualizar um registro de manutenção (usando req.body)
 router.put('/', (req, res) => {
-    const { titulo_do_chamado, tecnico_Responsavel , mensagem_solucao, data_resolucao } = req.body;
+    const { id, cpf_tecnico , mensagem_solucao } = req.body;
 
     const query = `
         UPDATE relatarProblema
-        SET tecnico_Responsavel = ?, mensagem_solucao = ?, data_resolucao = ?, status = 'Resolvido'
-        WHERE titulo_do_chamado = ?`;
+        SET cpf_tecnico = ?, mensagem_solucao = ?, data_resolucao = CURRENT_TIMESTAMP, status = 'Resolvido'
+        WHERE id = ?`;
 
-    db.query(query, [tecnico_Responsavel, mensagem_solucao, data_resolucao, titulo_do_chamado], (err, result) => {
+    db.query(query, [cpf_tecnico, mensagem_solucao, id], (err, result) => {
         if (err) {
             return res.status(500).send(err);
         }
         res.status(200).send('Manutenção atualizada com sucesso');
+        console.log(res)
     });
 });
 
@@ -36,8 +37,8 @@ router.get('/pendente', (req, res) => {
 
 // Ler tecnicos cadastrados
 router.get('/tecnicocadastrado', (req, res) => {
-    db.query(`SELECT id, CONCAT(id, ' - ', nome) AS nome 
-              FROM cadastroTecnico`, (err, results) => {
+    db.query(`SELECT id, CONCAT(id, ' - ', nome) AS nome, cpf
+                FROM cadastroTecnico;`, (err, results) => {
         if (err) {
             return res.status(500).send(err);
         }
