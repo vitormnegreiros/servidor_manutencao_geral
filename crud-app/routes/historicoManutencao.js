@@ -10,7 +10,7 @@ router.get('/', (req, res) => {
         rp.data_abertura AS data,
         rp.local,
         rp.tipo_manutencao,
-        rp.mensagem_problema,
+        rp.titulo_do_chamado,
         rp.mensagem_solucao,
         ct.nome AS tecnico_responsavel
     FROM 
