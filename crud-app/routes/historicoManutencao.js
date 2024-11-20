@@ -1,9 +1,16 @@
+require('dotenv').config(); 
+
 const express = require('express');
+const bcrypt = require('bcrypt');
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 const db = require('../db/dbConnection');
+const authenticateToken = require('../middleware/authMiddleware');
+
+
 
 // Rota para buscar todas as manutenções
-router.get('/', (req, res) => {
+router.get('/', authenticateToken , (req, res) => {
     db.query(`
      SELECT 
         rp.id AS chamado_id,
@@ -28,7 +35,7 @@ router.get('/', (req, res) => {
 });
 
 // Rota para filtrar manutenções por intervalo de datas
-router.get('/data', (req, res) => {
+router.get('/data', authenticateToken , (req, res) => {
     const { dataInicio, dataFim } = req.query;
 
     const query = `
@@ -52,7 +59,7 @@ router.get('/data', (req, res) => {
 });
 
 // Rota para filtrar manutenções por local
-router.get('/local', (req, res) => {
+router.get('/local',authenticateToken, (req, res) => {
     const { local } = req.query;
 
     const query = `
@@ -77,7 +84,7 @@ router.get('/local', (req, res) => {
 });
 
 // Rota para filtrar manutenções por tipo
-router.get('/tipo', (req, res) => {
+router.get('/tipo',authenticateToken, (req, res) => {
     const { tipoManutencao } = req.query;
 
     const query = `
@@ -102,7 +109,7 @@ router.get('/tipo', (req, res) => {
 });
 
 // Rota para filtrar manutenções por técnico responsável
-router.get('/tecnico', (req, res) => {
+router.get('/tecnico',authenticateToken, (req, res) => {
     const { cpfTecnico } = req.query;
 
     const query = `
@@ -127,7 +134,7 @@ router.get('/tecnico', (req, res) => {
 });
 
 // Rota para buscar manutenção por ID
-router.get('/id', (req, res) => {
+router.get('/id',authenticateToken, (req, res) => {
     const { id } = req.query;
 
     db.query('SELECT * FROM cadastroManutencao WHERE id = ?', [id], (err, result) => {
@@ -139,7 +146,7 @@ router.get('/id', (req, res) => {
 });
 
 // Rota para buscar problemas relatados por ID
-router.get('/problema-id', (req, res) => {
+router.get('/problema-id',authenticateToken, (req, res) => {
     const { id } = req.query;
 
     db.query('SELECT * FROM relatarProblema WHERE id = ?', [id], (err, result) => {
@@ -151,7 +158,7 @@ router.get('/problema-id', (req, res) => {
 });
 
 // Rota combinada para múltiplos filtros
-router.get('/filtrado', (req, res) => {
+router.get('/filtrado',authenticateToken, (req, res) => {
     const { dataInicio, dataFim } = req.query;
 
     const query = `
@@ -176,7 +183,7 @@ router.get('/filtrado', (req, res) => {
 });
 
 // Rota para pegar todos os locais disponíveis
-router.get('/locais', (req, res) => {
+router.get('/locais',authenticateToken, (req, res) => {
     const query = `
         SELECT DISTINCT local 
         FROM relatarProblema
@@ -192,7 +199,7 @@ router.get('/locais', (req, res) => {
 
 
 // Rota para pegar todos os tipos de manutenção disponíveis
-router.get('/tipos-manutencao', (req, res) => {
+router.get('/tipos-manutencao',authenticateToken , (req, res) => {
     const query = `
         SELECT DISTINCT tipo_manutencao 
         FROM relatarProblema
@@ -208,7 +215,7 @@ router.get('/tipos-manutencao', (req, res) => {
 
 
 // Rota para pegar todos os técnicos disponíveis
-router.get('/tecnicos', (req, res) => {
+router.get('/tecnicos',authenticateToken , (req, res) => {
     const query = `
         SELECT DISTINCT cpf, nome
         FROM cadastroTecnico;
