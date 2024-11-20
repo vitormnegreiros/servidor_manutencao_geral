@@ -1,9 +1,15 @@
+require('dotenv').config(); 
+
 const express = require('express');
 const router = express.Router();
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 const db = require('../db/dbConnection');
+const authenticateToken = require('../middleware/authMiddleware');
+
 
 // Rota para obter chamados pendentes ordenados pela data de abertura mais recente
-router.get('/', (req, res) => {
+router.get('/',authenticateToken, (req, res) => {
     const query = `
     SELECT 
     rp.id AS chamado_id,
