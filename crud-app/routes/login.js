@@ -35,9 +35,15 @@ router.post('/', async (req, res) => {
         // Gera um token JWT
         const token = jwt.sign({ id: user.id, email: user.email }, SECRET_KEY, { expiresIn: '1h' });
 
-        res.status(200).send({ message: 'Login bem-sucedido!', token });
+        res.status(200).send({
+            message: 'Login bem-sucedido!',
+            token,
+            nome: user.nome, // Inclui o nome do usuário
+            email: user.email // Inclui o email do usuário
+        });
     });
 });
+
 
 module.exports = router;
 
